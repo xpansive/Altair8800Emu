@@ -6,7 +6,7 @@ public class OpcodeFactory {
     
     private static HashMap<Integer, Opcode> opcodeMap = new HashMap<Integer, Opcode>();
     private static Opcode[] opcodes = new Opcode[] {
-        new NOP(), new JMP(), new LDA(), new STA(), new MOV(), new ADD()
+        new NOP(), new JMP(), new LDA(), new STA(), new MOV(), new ADD(), new ADI()
     };
     
     static {
