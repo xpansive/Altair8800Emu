@@ -5,7 +5,7 @@ import java.util.HashMap;
 import com.xpansive.altair8800.opcodes.Opcode;
 import com.xpansive.altair8800.opcodes.OpcodeFactory;
 
-public class CPU{
+public class CPU {
 
     private int flags;
     private HashMap<Register, Integer> registers = new HashMap<Register, Integer>();
@@ -17,7 +17,7 @@ public class CPU{
         for (Register register : Register.values()) {
             registers.put(register, 0);
         }
-        
+
         memory = new Memory(256);
     }
 
@@ -32,7 +32,7 @@ public class CPU{
     public int getRegisterValue(Register register) {
         if (register.getWidth() == 8 || register == Register.SP)
             return registers.get(register);
-        
+
         // 16bit
         int loByte = registers.get(register.getLowByte());
         int hiByte = registers.get(register.getHighByte());
@@ -60,15 +60,7 @@ public class CPU{
     }
 
     public void wait(int cycles) {
-        //TODO: Shitty way of visualizing cycles
-        for (int i = 0; i < cycles; i++) {
-            //System.out.print(i + ",");
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        // TODO: Timing
     }
 
     public Memory getMemory() {
@@ -78,7 +70,9 @@ public class CPU{
     public void run(int numOpcodes) {
         for (int i = 0; i < numOpcodes; i++) {
             Opcode opcode = OpcodeFactory.fromByteCode(memory.readByte(programCounter));
-
+            if (opcode == null) {
+                System.out.println("Error: unreconignized opcode " + memory.readByte(programCounter));
+            }
             int opcodeLoc = programCounter;
             programCounter += opcode.getLength();
 
