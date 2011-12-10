@@ -22,8 +22,6 @@ public abstract class Opcode {
      *            The first argument to the opcode.
      * @param arg1
      *            The second argument to the opcode.
-     * @throws Exception
-     *             if not implemented.
      */
     public abstract void execute(CPU cpu, int arg0, int arg1, int opcode);
 
@@ -39,14 +37,14 @@ public abstract class Opcode {
     /**
      * Gets the length, in bytes, of this opcode.
      * 
-     * @return The length, in bytes where length > 0.
+     * @return The length in bytes.
      */
     public abstract int getLength();
 
     /**
      * Gets the number of CPU cycles required to process this opcode.
      * 
-     * @return The number of CPU cycles where cycles > 0.
+     * @return The number of CPU cycles.
      */
     public abstract int getCycles(int opcode);
 
@@ -65,10 +63,10 @@ public abstract class Opcode {
      * @return The name.
      */
     public abstract String getName(int opcode);
-    
-    public static int setFlags(int val, CPU cpu, EnumSet<Flags> flagsToSet) {
+
+    protected int setFlags(int val, CPU cpu, EnumSet<Flags> flagsToSet) {
         int flags = cpu.getFlags();
-        
+
         if (flagsToSet.contains(Flags.CARRY))
             if (val > 255) {
                 val %= 256;
@@ -77,12 +75,12 @@ public abstract class Opcode {
         if (flagsToSet.contains(Flags.ZERO))
             flags = MathHelper.setBit16(flags, Flags.ZERO.getBit(), val == 0);
         if (flagsToSet.contains(Flags.SIGN))
-        flags = MathHelper.setBit16(flags, Flags.SIGN.getBit(), MathHelper.bit(val, 7));
+            flags = MathHelper.setBit16(flags, Flags.SIGN.getBit(), MathHelper.bit(val, 7));
         if (flagsToSet.contains(Flags.PARITY))
-        flags = MathHelper.setBit16(flags, Flags.PARITY.getBit(), MathHelper.bitParity(val));
-        
-        //TODO: Auxiliary carry
-        
+            flags = MathHelper.setBit16(flags, Flags.PARITY.getBit(), MathHelper.bitParity(val));
+
+        // TODO: Auxiliary carry
+
         cpu.setFlags(flags);
         return val;
     }
