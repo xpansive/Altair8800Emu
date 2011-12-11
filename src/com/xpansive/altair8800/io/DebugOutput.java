@@ -20,43 +20,38 @@ public class DebugOutput {
     }
 
     public void printDebugInfo(CPU cpu, int memLocation) {
-        StringBuilder sb = new StringBuilder();
         Memory mem = cpu.getMemory();
         Opcode op = OpcodeFactory.fromByteCode(mem.readByte(memLocation));
         if (op == null)
             return;
 
-        sb.append(padHex(memLocation, 4)); // Memory location
-        sb.append("\t" + op.getName(mem.readByte(memLocation)) + "       "); // Opcode name
-        switch (op.getLength()) {
-        case 3:
-            sb.append(padHex(mem.readByte(memLocation + 1) | (mem.readByte(memLocation + 2) << 8), 4)); // word argument
-            break;
-        case 2:
-            sb.append(padHex(mem.readByte(memLocation + 1), 2)); // single byte argument
-            // Fallthrough to append an extra tab
-        default:
-            sb.append("\t");
-            break;
-        }
-        // Add in register values
-        sb.append("\tA=" + cpu.getRegisterValue(Register.A));
-        sb.append("\tB=" + cpu.getRegisterValue(Register.B));
-        sb.append("\tC=" + cpu.getRegisterValue(Register.C));
-        sb.append("\tD=" + cpu.getRegisterValue(Register.D));
-        sb.append("\tE=" + cpu.getRegisterValue(Register.E));
-        sb.append("\tH=" + cpu.getRegisterValue(Register.H));
-        sb.append("\tL=" + cpu.getRegisterValue(Register.L));
-        sb.append("\tSP=" + cpu.getRegisterValue(Register.SP));
+        String text = String.format(
+                "%-8s%-10s%-10sA=%-6sB=%-6sC=%-6sD=%-6sE=%-6sF=%-6sH=%-6sL=%-6sSP=%-6sF=%-10s", 
 
-        // Flags
-        sb.append("\tF=" + padBin(cpu.getFlags(), 8));
+                padHex(memLocation, 4), // Memory location
+                op.getName(mem.readByte(memLocation)), // Name
+                op.getLength() == 3 ? padHex(mem.readWord(memLocation + 1), 4) : // Word argument
+                op.getLength() == 2 ? padHex(mem.readByte(memLocation + 1), 2) : // Byte argument
+                        "", // No argument
 
-        out.println(sb.toString());
+                // Registers
+                padHex(cpu.getRegisterValue(Register.A), 2),
+                padHex(cpu.getRegisterValue(Register.B), 2),
+                padHex(cpu.getRegisterValue(Register.C), 2),
+                padHex(cpu.getRegisterValue(Register.D), 2),
+                padHex(cpu.getRegisterValue(Register.E), 2),
+                padHex(cpu.getRegisterValue(Register.F), 2),
+                padHex(cpu.getRegisterValue(Register.H), 2),
+                padHex(cpu.getRegisterValue(Register.L), 2),
+
+                padHex(cpu.getRegisterValue(Register.SP), 2), // Stack pointer
+                padBin(cpu.getFlags(), 8)); // Flags
+
+        out.println(text);
     }
 
     private String padHex(int num, int pad) {
-        return "0x" + String.format("%" + pad + "s", Integer.toHexString(num)).replace(' ', '0');
+        return "0x" + String.format("%" + pad + "s", Integer.toHexString(num).toUpperCase()).replace(' ', '0');
     }
 
     private String padBin(int num, int pad) {
