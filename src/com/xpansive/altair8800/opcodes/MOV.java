@@ -31,20 +31,18 @@ public class MOV extends Opcode {
 
     @Override
     public void execute(CPU cpu, int arg0, int arg1, int opcode) {
-    	Register srcReg = getSrcReg(opcode);
+        Register srcReg = getSrcReg(opcode);
         Register destReg = getDestReg(opcode);
-        
+
         if (srcReg == Register.HL) {
-        	int memPos = cpu.getRegisterValue(srcReg);
-        	int srcVal = cpu.getMemory().readByte(memPos);
-        	cpu.setRegisterValue(destReg, srcVal);
-        }
-        else if (destReg == Register.HL) {
-        	int memPos = cpu.getRegisterValue(destReg);
-        	cpu.getMemory().writeByte(memPos, cpu.getRegisterValue(srcReg));
-        }
-        else {
-        	cpu.setRegisterValue(destReg, cpu.getRegisterValue(srcReg));
+            int memPos = cpu.getRegisterValue(srcReg);
+            int srcVal = cpu.getMemory().readByte(memPos);
+            cpu.setRegisterValue(destReg, srcVal);
+        } else if (destReg == Register.HL) {
+            int memPos = cpu.getRegisterValue(destReg);
+            cpu.getMemory().writeByte(memPos, (byte) cpu.getRegisterValue(srcReg));
+        } else {
+            cpu.setRegisterValue(destReg, cpu.getRegisterValue(srcReg));
         }
     }
 
@@ -57,32 +55,32 @@ public class MOV extends Opcode {
     public int getCycles(int opcode) {
         Register srcReg = getSrcReg(opcode);
         Register destReg = getDestReg(opcode);
-        
+
         return srcReg == Register.HL || destReg == Register.HL ? 7 : 5;
     }
 
     @Override
     public String getName(int opcode) {
-    	Register srcReg = getSrcReg(opcode);
+        Register srcReg = getSrcReg(opcode);
         Register destReg = getDestReg(opcode);
-        
+
         return "MOV " + destReg.name() + "," + srcReg.name();
     }
-    
+
     @Override
     public EnumSet<Register> getAffectedRegisters(int opcode) {
         return EnumSet.of(getDestReg(opcode));
     }
-    
+
     private Register getSrcReg(int opcode) {
-    	int src = MathHelper.bitRange16(opcode, 0, 3);
-        
+        int src = MathHelper.bitRange16(opcode, 0, 3);
+
         return registerValues[src];
     }
-    
+
     private Register getDestReg(int opcode) {
-    	int dest = MathHelper.bitRange16(opcode, 3, 6);
-        
+        int dest = MathHelper.bitRange16(opcode, 3, 6);
+
         return registerValues[dest];
     }
 }
