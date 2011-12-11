@@ -15,7 +15,7 @@ public class STA extends Opcode {
 
     @Override
     public void execute(CPU cpu, int lo, int hi, int opcode) {
-        cpu.getMemory().writeByte(MathHelper.to16(lo, hi), (byte) cpu.getRegisterValue(Register.A));
+        cpu.getMemory().writeByte(MathHelper.to16(lo, hi), cpu.getRegisterValue(Register.A));
     }
 
     @Override

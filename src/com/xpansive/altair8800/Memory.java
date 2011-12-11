@@ -15,7 +15,7 @@ public class Memory {
         return 0;
     }
 
-    public void writeByte(int loc, byte val) {
+    public void writeByte(int loc, int val) {
         if (loc <= size)
             memory[loc] = val;
     }

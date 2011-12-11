@@ -40,7 +40,7 @@ public class MOV extends Opcode {
             cpu.setRegisterValue(destReg, srcVal);
         } else if (destReg == Register.HL) {
             int memPos = cpu.getRegisterValue(destReg);
-            cpu.getMemory().writeByte(memPos, (byte) cpu.getRegisterValue(srcReg));
+            cpu.getMemory().writeByte(memPos, cpu.getRegisterValue(srcReg));
         } else {
             cpu.setRegisterValue(destReg, cpu.getRegisterValue(srcReg));
         }
