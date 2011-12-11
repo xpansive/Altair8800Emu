@@ -2,6 +2,7 @@ package com.xpansive.altair8800;
 
 import java.util.HashMap;
 
+import com.xpansive.altair8800.io.DebugOutput;
 import com.xpansive.altair8800.opcodes.Opcode;
 import com.xpansive.altair8800.opcodes.OpcodeFactory;
 
@@ -11,6 +12,7 @@ public class CPU {
     private HashMap<Register, Integer> registers = new HashMap<Register, Integer>();
     private int programCounter;
     private Memory memory;
+    private DebugOutput debug = new DebugOutput(System.out);
 
     public CPU() {
         // Set all registers to 0
@@ -18,7 +20,7 @@ public class CPU {
             registers.put(register, 0);
         }
 
-        memory = new Memory(256);
+        memory = new Memory(65535);
     }
 
     public int getFlags() {
@@ -70,9 +72,13 @@ public class CPU {
     public void run(int numOpcodes) {
         for (int i = 0; i < numOpcodes; i++) {
             Opcode opcode = OpcodeFactory.fromByteCode(memory.readByte(programCounter));
+
             if (opcode == null) {
-                System.out.println("Error: unreconignized opcode " + memory.readByte(programCounter));
+                debug.error("unreconignized opcode " + memory.readByte(programCounter));
+                programCounter++;
+                continue;
             }
+
             int opcodeLoc = programCounter;
             programCounter += opcode.getLength();
 
